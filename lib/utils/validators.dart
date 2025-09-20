@@ -106,9 +106,11 @@ class Validators {
     if (value == null || value.isEmpty) {
       return 'Mobile number is required';
     }
+    // Remove +91 prefix if present
+    String cleanValue = value.replaceAll('+91', '').trim();
     final mobileRegex = RegExp(r'^[6-9]\d{9}$');
-    if (!mobileRegex.hasMatch(value)) {
-      return 'Enter a valid 10-digit mobile number';
+    if (!mobileRegex.hasMatch(cleanValue)) {
+      return 'Enter a valid 10-digit mobile number starting with 6-9';
     }
     return null;
   }

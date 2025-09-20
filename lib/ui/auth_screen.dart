@@ -371,11 +371,22 @@ class _AuthScreenState extends State<AuthScreen>
       final result = await _authService.signup(userData);
 
       if (result['success'] == true) {
-        _showSuccessSnackBar('Registration successful! User ID: ${result['userId']}');
-        // Navigate to home screen
-        Navigator.pushReplacementNamed(context, '/home');
+        if (result['requiresLogin'] == true) {
+          _showSuccessSnackBar('Registration successful! Please login to continue.');
+          // Switch to login tab
+          _tabController.animateTo(0);
+        } else {
+          _showSuccessSnackBar('Registration successful! You are now logged in.');
+          // Navigate to home screen
+          Navigator.pushReplacementNamed(context, '/home');
+        }
       } else {
-        _showErrorSnackBar(result['message'] ?? 'Registration failed');
+        String errorMessage = result['message'] ?? 'Registration failed';
+        if (result['errors'] != null) {
+          final errors = result['errors'] as Map<String, dynamic>;
+          errorMessage += '\n${errors.values.join('\n')}';
+        }
+        _showErrorSnackBar(errorMessage);
       }
     } catch (e) {
       _showErrorSnackBar('An error occurred during registration');
@@ -404,6 +415,7 @@ class _AuthScreenState extends State<AuthScreen>
         backgroundColor: Colors.red,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        duration: const Duration(seconds: 5), // Longer duration for error messages
       ),
     );
   }
