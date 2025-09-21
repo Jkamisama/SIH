@@ -143,6 +143,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Build the login page UI
     return Scaffold(
       body: Container(
         width: double.infinity,
